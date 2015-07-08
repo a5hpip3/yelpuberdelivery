@@ -16,40 +16,52 @@
 //= require_tree .
 
 var markersArray = [];
-var SF_LAT = 37.7435841;
-var SF_LNG = -122.4897851;
+var NEW_LAT = 37.7435841;
+var NEW_LNG = -122.4897851;
+
 var QUERY_DELAY = 400;
 var inactive = false;
 
+
 $(document).ready(function() {
   // initialize the map on load
-  initialize();
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(initialize);
+  } 
+
+  //initialize();
+
 });
+
 
 /**
  * Initializes the map and some events on page load
  */
-var initialize = function() {
+var initialize = function(position) {
   // Define some options for the map
+  if (position) {
+    var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    NEW_LAT = position.coords.latitude;
+    NEW_LNG = position.coords.longitude;
+  };
+
   var mapOptions = {
-    center: new google.maps.LatLng(SF_LAT, SF_LNG),
+    center: userLatLng,
     zoom: 12,
-
+    mapTypeID: google.maps.MapTypeId.ROADMAP,
     // hide controls
-    panControl: false,
-    streetViewControl: false,
-
+    
     // reconfigure the zoom controls
-    zoomControl: true,
-    zoomControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_BOTTOM,
-      style: google.maps.ZoomControlStyle.SMALL
-    }
   };
 
   // create a new Google map with the options in the map element
   var map = new google.maps.Map($('#map_canvas')[0], mapOptions);
-
+  var loc_dot = "images/Blue_dot2.png";
+  new google.maps.Marker({
+          map: map,
+          position: userLatLng,
+          icon: loc_dot
+  });
   bind_controls(map);
 }
 
@@ -75,6 +87,7 @@ var bind_controls = function(map) {
 
   // push the search controls onto the map
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(controlContainer);
+
 }
 
 /**
@@ -90,7 +103,7 @@ var search = function(map) {
 
   // post to the search with the search term, take the response data
   // and process it
-  $.post('/search', { term: searchTerm }, function(data) {
+  $.post('/search', { term: searchTerm, coord_lat: NEW_LAT, coord_lng: NEW_LNG }, function(data) {
     inactive = true;
 
     // do some clean up
@@ -122,6 +135,7 @@ var capture = function(i, map, business) {
     }
 
     $('#results').append(build_results_container(business));
+    
 
     // get the geocoded address for the business's location
     geocode_address(map, business['name'], business['location']);

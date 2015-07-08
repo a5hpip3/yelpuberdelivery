@@ -4,6 +4,7 @@ class HomeController < ApplicationController
 
   def search
     parameters = { term: params[:term], limit: 16 }
-    render json: Yelp.client.search('San Francisco', parameters)
+    coordinates = { latitude: params[:coord_lat], longitude: params[:coord_lng] }
+    render json: Yelp.client.search_by_coordinates(coordinates, parameters)
   end
 end

@@ -299,17 +299,22 @@ var geocode_address = function(map, name, location_object) {
 var update_uber_estimate = function(lat, lng, userLat, userLng) {
   
   $.ajax({
-    url: "https://api.uber.com/v1/estimates/price",
+    url: "https://api.uber.com/v1/estimates/price?callback=jsonp",
     headers: {
       Authorization: "Token " + uberServerToken
     },
+    dataType: "jsonp",
+    jsonpCallback: 'myfunc',
+    jsonp: 'callback',
     data: {
       start_latitude: lat,
       start_longitude: lng,
       end_latitude: userLat,
       end_longitude: userLng
-    },
-    success: function(result) {
+    }
+  });
+
+  function myfunc(result) {
         console.log(result);
 
         var response = result["prices"];
@@ -331,7 +336,6 @@ var update_uber_estimate = function(lat, lng, userLat, userLng) {
           
         }
     }
-  });
   
 }
 

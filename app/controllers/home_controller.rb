@@ -16,8 +16,8 @@ class HomeController < ApplicationController
     lng = params[:startlng]
     userLat = params[:endlat]
     userLng = params[:endlng]
-    @url = "https://api.uber.com/v1/estimates/price?start_latitude=#{lat}&start_longitude=#{lng}&end_latitude=#{userLat}&end_longitude=#{userLng}"
-    result = Unirest.get @url, headers: {'Authorization' => "Token #{@uberServerToken}"}
+    @url = "https://api.uber.com/v1/estimates/price"
+    result = Unirest.get @url, headers: {'Authorization' => "Token #{@uberServerToken}"}, parameters: {"start_latitude"=> lat, "start_longitude" => lng, "end_latitude" => userLat, "end_longitude" => userLng}
   	render :json => result.raw_body
   end
 

@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>RailsYelp</title>
+  <title>UberItToMe</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{ENV['GOOGLE_MAPS']}&sensor=true" %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
-
+  <% if current_user %>
+  	<%= link_to "Sign out", "/logout", id: "sign_out" %>
+  <% else %>
+  	<%= link_to "Sign in to Uber", "/auth/uber", id: "sign_in" %>
+  <% end %>
 </head>
 <body>
 
 <%= yield %>
+
 
 </body>
 </html>

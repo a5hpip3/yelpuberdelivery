@@ -1,0 +1,24 @@
+Environment variables to set:
+
+YELP:
+
+	YELP_CONSUMER_KEY 		: MN6nYqBT10pFnHbiRjKG4A
+	YELP_CONSUMER_SECRET	: fAqqzc1nMbZIn0ksTuEvKiuKUGo
+	YELP_TOKEN   			: es-BzduBu5hDqithboiQtiWRV0gI8Hb0
+	YELP_TOKEN_SECRET		: ldnETTftQlRd4zH9efsrefFdHe0
+
+GOOGLE MAPS:
+
+ 	GOOGLE_MAPS				: AIzaSyCG-JA0ufRYpjC7mFPwbytJI9SyfWdlXqc
+
+
+UBER:
+
+	uberClientId 			: "afazQ6dAL6w5nqQ6JqOrKxFu0RgrsO77"
+	uberServerToken 		: "DLJgLTxr89OWSKRD9sAxhZH9uWaYzqF0rM9u3Ng2";
+	uberClientSecret		: "HbKbS-1F7V1OLS_iLljtogN2YdBnqCGL_BopPf-y"
+
+
+GENERAL:
+
+	redirect_url			: "http://localhost:3000"    ///change this when deployed

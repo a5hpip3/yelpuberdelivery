@@ -16,15 +16,24 @@
 //= require_tree .
 
 var markersArray = [];
-var NEW_LAT = 37.7435841;
-var NEW_LNG = -122.4897851;
+var NEW_LAT = 37.787988; 
+var NEW_LNG = -122.407788;
 
 var QUERY_DELAY = 400;
 var inactive = false;
+var biz_ID = 0
+
+var uberClientId = "afazQ6dAL6w5nqQ6JqOrKxFu0RgrsO77"
+var uberServerToken = "DLJgLTxr89OWSKRD9sAxhZH9uWaYzqF0rM9u3Ng2";
+
+
 
 
 $(document).ready(function() {
   // initialize the map on load
+  $('.uberbadge').css("display", "none");
+  $('.Divider').css("display", "none");
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(initialize);
   } 
@@ -38,6 +47,7 @@ $(document).ready(function() {
  * Initializes the map and some events on page load
  */
 var initialize = function(position) {
+  
   // Define some options for the map
   if (position) {
     var userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -49,9 +59,7 @@ var initialize = function(position) {
     center: userLatLng,
     zoom: 12,
     mapTypeID: google.maps.MapTypeId.ROADMAP,
-    // hide controls
     
-    // reconfigure the zoom controls
   };
 
   // create a new Google map with the options in the map element
@@ -63,6 +71,27 @@ var initialize = function(position) {
           icon: loc_dot
   });
   bind_controls(map);
+
+  var uberContainer = $('#uber_container')[0];
+  
+  /**
+   * Send location of clicked place & home coordinates to uber update
+   */
+  $("body").on("click", "div.result", function() {
+    bus_loc = $(this).attr('place_add')
+    $(".estimate p").html("Updating estimate..."); 
+    var lat, lng = geocode_getcoord(bus_loc, NEW_LAT, NEW_LNG);
+  });
+
+
+  $("body").on("click", "div.uberbadge", function() {
+      alert("Not yet implemented. Coming soon!")
+      $.post('/makereq', {startlat: lat, startlng: lng, userlt: NEW_LAT, userln: NEW_LNG, prodid: prod_id}, function(result) {
+        console.log(result);
+
+      });
+  });
+
 }
 
 /**
@@ -89,6 +118,43 @@ var bind_controls = function(map) {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(controlContainer);
 
 }
+
+
+/*
+* To get time estimate of nearest to user location
+* We don't need to show this information as we are updating 
+* time and price info based on chosen place
+*
+* Keeping this code here for future usage. 
+*
+var getQuickestNearby = function(latitude,longitude) {
+  $.ajax({
+    url: "https://api.uber.com/v1/estimates/time",
+    headers: {
+        Authorization: "Token " + uberServerToken
+    },
+    data: {
+        start_latitude: latitude,
+        start_longitude: longitude
+    },
+    success: function(result) {
+        console.log(result);
+
+        var response = result["times"];
+        var quickest = response[0];
+        if (typeof quickest != typeof undefined) {
+            console.log("Updating time estimate...")
+        $(".time p").html(Math.ceil(quickest.estimate / 60.0) + " min");
+      }  
+    }
+  });
+}
+*
+*
+*/
+
+
+
 
 /**
  * Makes a post request to the server with the search term and
@@ -129,12 +195,13 @@ var search = function(map) {
  * param: business - the business object from the response
  */
 var capture = function(i, map, business) {
+  
   setTimeout(function() {
     if (i === 15) {
       inactive = false;
     }
 
-    $('#results').append(build_results_container(business));
+    $('#results').append(build_results_container(business, i));
     
 
     // get the geocoded address for the business's location
@@ -147,9 +214,9 @@ var capture = function(i, map, business) {
  *
  * param: business - object of the business response
  */
-var build_results_container = function(business) {
+var build_results_container = function(business, biz_ID) {
   return [
-    '<div class="result">',
+      '<div class="result" place_id="'+ biz_ID +'" place_add="', business['location']['address'][0] + ',' + business['location']['city'] + ',' + business['location']['country_code'],'">',
       '<img class="biz_img" src="', business['image_url'], '">',
       '<h5><a href="', business['url'] ,'" target="_blank">', business['name'], '</a></h5>',
       '<img src="', business['rating_img_url'], '">',
@@ -168,6 +235,26 @@ var build_results_container = function(business) {
  *               over the dropped marker
  * param: location_object - an object of the businesses address
  */
+
+var geocode_getcoord = function(address, userLat, userLng) {
+  var geocoder = new google.maps.Geocoder();
+
+  geocoder.geocode({address: address}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      lat = results[0].geometry.location.lat();
+      lng = results[0].geometry.location.lng();
+
+      //send location coordinates and user location to update uber estimate
+      update_uber_estimate(lat,lng,userLat,userLng);
+
+    } else {
+      console.log("Geocode was not successful for the following reason: " + status);
+    }
+  });
+};
+
+
+
 var geocode_address = function(map, name, location_object) {
   var geocoder = new google.maps.Geocoder();
 
@@ -196,6 +283,51 @@ var geocode_address = function(map, name, location_object) {
     }
   });
 };
+
+/**
+ * Get geocoded lat,lng and send to uber api to get estimate
+ * If request button is clicked, dispatch ride to location
+ */
+
+var update_uber_estimate = function(lat, lng, userLat, userLng) {
+  
+  $.ajax({
+    url: "https://api.uber.com/v1/estimates/price",
+    headers: {
+      Authorization: "Token " + uberServerToken
+    },
+    data: {
+      start_latitude: lat,
+      start_longitude: lng,
+      end_latitude: userLat,
+      end_longitude: userLng
+    },
+    success: function(result) {
+        console.log(result);
+
+        var response = result["prices"];
+        if (typeof response != typeof undefined) {
+            response.sort(function(t0,t1) {
+              return t0.estimate - t1.estimate;
+            });
+
+          var cheapest = response[0];
+          if (typeof cheapest != typeof undefined) {
+            $(".estimate p").css("display", "none");
+            $('.uberbadge').css("display", "block");
+            $('.Divider').css("display", "block");
+            $(".time_est p").html("IN " + Math.ceil(cheapest.duration/60.0) + "MIN");  
+            $(".price p").html(cheapest.estimate);
+            $(".product_id").html(cheapest.product_id);
+            prod_id = cheapest.product_id;
+          }
+          
+        }
+    }
+  });
+  
+}
+
 
 /**
  * Remove all of the markers from the map by setting them

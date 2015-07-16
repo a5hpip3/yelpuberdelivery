@@ -31,6 +31,115 @@ html, body {
   margin: 20px;
 }
 
+#uber_container {
+  right: 25%;
+  top: 5px;
+}
+
+#uber_button {
+    background-image: url('/images/UBERdelivery.png');
+    background-size: cover;
+    position: absolute;
+    right: 0%;
+    top: 40px;
+    width: 280px;
+    height: 44px;
+}
+
+.time {
+    position: absolute;
+    right: 1%;
+    top: 50px;
+}
+
+.time p {
+  color: #fff;
+  display: inline-block;
+  padding-top: 2px;
+}
+
+.product_id {
+  display: none;
+}
+
+#grey_container {
+  right: 25%;
+  top: 45px;
+}
+
+#greybox {
+    background-image: url('/images/greyBox.png');
+    background-size: cover;
+    position: absolute;
+    right: 0%;
+    top: 85px;
+    width: 280px;
+    height: 44px;
+    border: 1px solid #CDCDC8
+}
+
+.uberbadge {
+  background-image: url('/images/UBERreqbadge.png');
+  background-size: contain;
+  position: absolute;
+  right: 12.0%;
+  top: 95px;
+  width: 100px;
+  height: 20px;
+
+}
+
+#dialog-authorize {
+  background-color: #000;
+  border:1px solid #000;
+  padding:15px;
+
+}
+
+.Divider {
+  border-left:2px solid #DFDFE3; 
+  height:43px;
+  position:absolute;
+  right:60px;
+  top:85px; 
+}
+
+.estimate {
+  position: absolute;
+  right: 2%;
+  top: 95px;
+}
+
+.estimate p {
+  color: #000;
+  display: inline-block;
+  padding-top: 2px;
+}
+
+.time_est {
+  position: absolute;
+  right: 80px;
+  top: 95px;
+}
+
+.time_est p {
+  color: #000;
+  display: inline-block;
+  padding-top: 2px;
+}
+
+.price {
+  position: absolute;
+  right: 12px;
+  top: 95px;
+}
+
+.price p {
+  color: #000;
+  display: inline-block;
+  padding-top: 2px;
+}
+
 #map_search {
   box-shadow: 2px 2px 3px #999;
   -moz-box-shadow: 2px 2px 3px #999;

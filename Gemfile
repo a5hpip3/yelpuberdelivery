@@ -48,6 +48,15 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'oauth2'
+gem 'oauth'
+
+gem 'httpclient'
+gem 'unirest'
+
+gem 'omniauth'
+gem 'omniauth-uber'
+
 
 # Yelp gem!
 gem 'yelp'

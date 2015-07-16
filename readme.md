@@ -34,13 +34,14 @@ You can get a Google Maps key from the [Google Developer Console](https://consol
 
 #### Uber
 
-You'll need to register an account on Uber developers and get API keys [developer site](https://developer.uber.com). 
+You'll need to register an account on Uber developers and get API keys [developer site](https://developer.uber.com). Once you have set up an app on Uber, configure your origin and redirect urls. Redirect URL should be in the form (http://YOUR-SERVER/auth/uber/callback).
 
-### ``config/database.yml``
+#### ``config/database.yml``
 
 The database file is fairly empty and is set to work with a clean/default PostgreSQL installation.
+Please do run a rake db:migrate to initiate user tables which are requried for authentication.
 
-### ``config/secrets.yml``
+#### ``config/secrets.yml``
 
 Every rails application employs a secret key to verify signed cookies. To keep people from using the same secret keys we've removed them here. You should generate new ones with ``rake secret`` before starting development.
 
@@ -59,4 +60,15 @@ Implement Ajax modal when clicked on a restaurant to allow user to:
 Instead of a manual call to Uber, implement an automatic Uber dispatch based on food order confirmation and time-till-ready.
 
 Send push or sms notifications to user when Uber dispatched, and/or when Uber close by with order.
+
+
+##### Credits
+
+This app is built on top of this Yelp+Rails example: https://github.com/Yelp/yelp-rails-example
+It utilizes the Yelp gem to make calls and get results from yelp. 
+
+We use an Omniauth strategy gem for Uber: https://github.com/tmilewski/omniauth-uber
+This gem is used for authentication in conjunction with Oauth2. The gem quickly builds a strategy for Uber authentication with Omniauth. 
+
+
 

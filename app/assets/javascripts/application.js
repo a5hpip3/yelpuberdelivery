@@ -23,11 +23,6 @@ var QUERY_DELAY = 400;
 var inactive = false;
 var biz_ID = 0
 
-var uberClientId = "afazQ6dAL6w5nqQ6JqOrKxFu0RgrsO77"
-var uberServerToken = "DLJgLTxr89OWSKRD9sAxhZH9uWaYzqF0rM9u3Ng2";
-
-
-
 
 $(document).ready(function() {
   // initialize the map on load
@@ -298,46 +293,30 @@ var geocode_address = function(map, name, location_object) {
 
 var update_uber_estimate = function(lat, lng, userLat, userLng) {
   
-  $.ajax({
-    url: "https://api.uber.com/v1/estimates/price?callback=jsonp",
-    headers: {
-      Authorization: "Token " + uberServerToken
-    },
-    dataType: "jsonp",
-    jsonpCallback: 'myfunc',
-    jsonp: 'callback',
-    data: {
-      start_latitude: lat,
-      start_longitude: lng,
-      end_latitude: userLat,
-      end_longitude: userLng
-    }
+  $.post('/getest', {startlat: lat, startlng: lng, endlat: userLat, endlng: userLng}, function(result) {
+    console.log(result);
+
+    var response = result["prices"];
+    if (typeof response != typeof undefined) {
+      response.sort(function(t0,t1) {
+        return t0.estimate - t1.estimate;
+      });
+
+      var cheapest = response[0];
+      if (typeof cheapest != typeof undefined) {
+        $(".estimate p").css("display", "none");
+        $('.uberbadge').css("display", "block");
+        $('.Divider').css("display", "block");
+        $(".time_est p").html("IN " + Math.ceil(cheapest.duration/60.0) + "MIN");  
+        $(".price p").html(cheapest.estimate);
+        $(".product_id").html(cheapest.product_id);
+        prod_id = cheapest.product_id;
+      };
+          
+    };
   });
 
-  function myfunc(result) {
-        console.log(result);
-
-        var response = result["prices"];
-        if (typeof response != typeof undefined) {
-            response.sort(function(t0,t1) {
-              return t0.estimate - t1.estimate;
-            });
-
-          var cheapest = response[0];
-          if (typeof cheapest != typeof undefined) {
-            $(".estimate p").css("display", "none");
-            $('.uberbadge').css("display", "block");
-            $('.Divider').css("display", "block");
-            $(".time_est p").html("IN " + Math.ceil(cheapest.duration/60.0) + "MIN");  
-            $(".price p").html(cheapest.estimate);
-            $(".product_id").html(cheapest.product_id);
-            prod_id = cheapest.product_id;
-          }
-          
-        }
-    }
-  
-}
+};
 
 
 

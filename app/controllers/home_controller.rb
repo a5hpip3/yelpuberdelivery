@@ -21,7 +21,7 @@ class HomeController < ApplicationController
   		@user = current_user
   		@token = "Authorization: Bearer #{@user.token}"
   		@uri = "https://sandbox-api.uber.com/v1/requests"
-  		response = Unirest.post @uri, headers:{ "Content-Type" => "application/json", "Authorization" => "Bearer #{@user.token}"}, parameters:{"start_latitude" => startlat, "start_longitude" => startlng, "end_latitude" => endlat, "end_longitude" => endlng} 
+  		response = Unirest.post @uri, headers:{ "Accept" => "application/json"}, parameters:{"Authorization" => "Bearer #{@user.token}", "start_latitude" => startlat, "start_longitude" => startlng, "end_latitude" => endlat, "end_longitude" => endlng} 
   		render :json => response.body
   	else
   		redirect_to ("/login")

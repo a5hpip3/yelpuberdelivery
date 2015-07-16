@@ -156,6 +156,13 @@ var getQuickestNearby = function(latitude,longitude) {
 
 
 
+  
+
+
+
+
+
+
 /**
  * Makes a post request to the server with the search term and
  * populates the map with the response businesses
@@ -327,6 +334,8 @@ var update_uber_estimate = function(lat, lng, userLat, userLng) {
   });
   
 }
+
+
 
 
 /**
